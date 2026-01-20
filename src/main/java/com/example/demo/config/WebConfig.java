@@ -12,20 +12,20 @@ public class WebConfig implements WebMvcConfigurer {
     @Value("${file.upload-dir:uploads}")
     private String uploadDir;
 
-    // 1. Cấu hình để xem được ảnh qua URL (Ví dụ: localhost:8080/uploads/ten-anh.jpg)
+    // Cấu hình CORS để Frontend gọi được API
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**") // Cho phép tất cả các endpoint
+                .allowedOrigins("https://shoptrangsuc.vercel.app") // domain frontend của bạn
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedHeaders("*")
+                .allowCredentials(true);
+    }
+
+    // Cấu hình hiển thị ảnh từ thư mục uploads
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/uploads/**")
                 .addResourceLocations("file:" + uploadDir + "/");
-    }
-
-    // 2. Cấu hình CORS để Frontend từ Vercel gọi được vào Backend trên Railway
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("https://shoptrangsuc.vercel.app") // Tên domain frontend của bạn
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*")
-                .allowCredentials(true);
     }
 }
